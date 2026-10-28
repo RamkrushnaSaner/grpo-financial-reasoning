@@ -1,0 +1,10 @@
+# Reward-density ablation: pass/fail correctness instead of partial credit.
+# Compare with base.yaml (`grpo sweep configs/base.yaml configs/ablations/*.yaml`).
+extends: ../base.yaml
+
+reward:
+  components:
+    - name: correct_binary
+      weight: 1.0
+    - name: format
+      weight: 0.1

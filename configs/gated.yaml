@@ -1,0 +1,17 @@
+# The open experiment: does the accuracy gain survive when the output contract
+# is enforced? NOT YET VALIDATED by a training run.
+#   - correct_gated: correctness credit only for "Answer: <number>" (no parser
+#     fallback), so format becomes a gate rather than an addend
+#   - lora_dropout 0.0: restores rho == 1 exactly at mu = 1
+extends: base.yaml
+
+model:
+  lora_dropout: 0.0
+
+reward:
+  components:
+    - name: correct_gated
+      weight: 1.0
+      params: {lam: 0.3, kappa: 0.2}
+    - name: format
+      weight: 0.1

@@ -1,0 +1,21 @@
+# Seconds on any CPU, no download: the full pipeline with a tiny stand-in model
+# (grpo/testing.py). Checks that every stage runs and every artifact is
+# written; the numbers mean nothing. Used by `make check` and CI.
+extends: smoke.yaml
+
+experiment:
+  output_dir: results/cpu
+
+model:
+  loader: tiny
+
+sampling:
+  max_new_tokens: 10
+
+training:
+  steps: 4
+  window: 2
+
+evaluation:
+  n: 3
+  probes: true

@@ -1,0 +1,18 @@
+# ~5 minutes on a T4. Exercises every pipeline stage on the real model; the
+# numbers are meaningless. Run this before any long job.
+extends: base.yaml
+
+model:
+  lora_dropout: 0.0
+
+sampling:
+  max_new_tokens: 96
+
+training:
+  steps: 6
+  window: 3
+
+evaluation:
+  n: 8
+  k: 2
+  probes: false

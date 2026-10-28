@@ -1,0 +1,5 @@
+# Everything needed to TRAIN on a GPU (e.g. Colab T4), equivalent to
+#   pip install -e ".[train,dev]"
+# On Colab, torch is preinstalled. For CPU-only work (tests, validation, the
+# CPU smoke run) install the package alone: pip install -e ".[dev]"
+-e .[train,dev]

@@ -1,0 +1,68 @@
+# Base configuration: every setting, with the values used for new experiments.
+#
+# It is the Run 6 method (same model, reward, GRPO settings and schedule) on the
+# corrected dataset (task.version 2). To reproduce the reported run exactly, use
+# configs/run6.yaml. Other configs extend this file and list only what differs.
+#
+# Run directory: <experiment.output_dir>/<experiment.name>/ ; the name defaults
+# to the config file's stem.
+
+experiment:
+  output_dir: results
+  seed: 42                    # training RNG (sampling, dropout); pass@k sampling in evaluation
+
+model:
+  loader: hf_lora             # hf_lora (Hugging Face + peft) | tiny (CPU stand-in, tests only)
+  name: Qwen/Qwen2.5-0.5B-Instruct
+  load_in_4bit: true          # NF4 base weights (QLoRA); needs bitsandbytes and a GPU
+  lora_r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05          # Run 6 value. > 0 breaks rho == 1 at mu = 1 (clip fraction
+                              # 0.0038 observed where the math predicts 0); see gated.yaml
+  target_modules: [q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj]
+
+task:
+  name: financial
+  version: 2                  # 1 = Run 6 generator (growth labels inconsistent with the
+                              # question for 63/104 growth items); 2 = labels from shown numbers
+  size: 500
+  train_pool: 400             # questions 0..399 train, 400..499 held out
+  seed: 42
+  tolerance: {}               # per answer type overrides, e.g. {dollar: 0.01}; defaults:
+                              # percentage 0.5, dollar 0.1, ratio 0.01, integer exact
+
+reward:                       # weighted sum; only within-group differences matter
+  components:
+    - name: correct_graded    # 1 if correct, else lam * exp(-rel_err / kappa); parser fallback ON
+      weight: 1.0
+      params: {lam: 0.3, kappa: 0.2}   # keep lam < 0.5: two partials must not beat one exact
+    - name: format            # 1 if the answer contains "Answer:"
+      weight: 0.1             # 10:1 so an auxiliary reward cannot outbid correctness
+
+algorithm:
+  group_size: 6               # G answers sampled per question
+  advantage: group_std        # (r - mean) / std within the group
+  loss: grpo                  # clipped surrogate - beta * k3 KL, length-normalised per answer
+  epsilon: 0.2                # clip range (inert at mu = 1 without dropout)
+  beta: 0.04                  # KL coefficient
+  mu: 1                       # inner epochs per rollout group
+
+sampling:
+  temperature: 1.0
+  top_p: 0.95
+  max_new_tokens: 160
+
+training:
+  steps: 60                   # one question per step
+  lr: 1.0e-5                  # AdamW on LoRA parameters only
+  grad_clip: 1.0
+  schedule_seed: 1234         # fixed question order shared by every run
+  window: 15                  # log interval and trend window
+
+evaluation:
+  n: 60                       # held-out questions, greedy decoding
+  k: 6                        # samples per question for pass@k (0 disables)
+  telemetry_lam: 0.3          # FIXED measurement stick for partial credit
+  telemetry_kappa: 0.2
+  probes: true                # base-vs-trained answers to the 15 probe questions
+  show: 2                     # completions printed per evaluation

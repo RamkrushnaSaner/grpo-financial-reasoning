@@ -1,0 +1,8 @@
+# Reward ablation: graded correctness only, no format component.
+extends: ../base.yaml
+
+reward:
+  components:
+    - name: correct_graded
+      weight: 1.0
+      params: {lam: 0.3, kappa: 0.2}

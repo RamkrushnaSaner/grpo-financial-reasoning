@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grpo-financial-reasoning"
+version = "2.0.0"
+description = "GRPO from first principles: a small, verified, modular implementation for verifiable reasoning"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Ramkrushna Saner" }]
+requires-python = ">=3.10"
+# Core: config, data, rewards, the GRPO math, evaluation and the CPU test suite.
+dependencies = ["numpy>=1.24", "torch>=2.1", "pyyaml>=6.0", "matplotlib>=3.7"]
+
+[project.optional-dependencies]
+# Training the real model (GPU).
+train = ["transformers>=4.44", "peft>=0.12", "bitsandbytes>=0.43", "accelerate>=0.33"]
+dev = ["pytest>=7.4", "ruff>=0.5"]
+
+[project.scripts]
+grpo = "grpo.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B"]
+ignore = ["E731"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*.py" = ["E402"]
+"tools/mutation_test.py" = ["E501"]   # a table of code snippets

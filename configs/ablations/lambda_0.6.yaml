@@ -1,0 +1,12 @@
+# Deliberate violation of the lam < 0.5 bound (two partial credits now outrank
+# one exact answer). Expect a warning. evaluation.telemetry_lam stays at 0.3:
+# the measurement stick must not move with the optimisation target.
+extends: ../base.yaml
+
+reward:
+  components:
+    - name: correct_graded
+      weight: 1.0
+      params: {lam: 0.6, kappa: 0.2}
+    - name: format
+      weight: 0.1

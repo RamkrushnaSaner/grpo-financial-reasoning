@@ -1,0 +1,9 @@
+# Reproduces the reported run (docs/RESULTS.md, Run 6), including its known issues:
+#   - task.version 1: 11 of the 60 held-out labels disagree with their own question
+#   - correct_graded with the parser fallback: format compliance fell 61.7% -> 20.0%
+#   - lora_dropout 0.05: rho != 1 at mu = 1
+# Same method as base.yaml; only the dataset version differs.
+extends: base.yaml
+
+task:
+  version: 1
