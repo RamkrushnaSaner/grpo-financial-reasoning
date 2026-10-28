@@ -21,7 +21,7 @@ jobs:
       - name: Install CPU PyTorch
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
       - name: Install package
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[dev]" pytest-github-actions-annotate-failures
       - name: Lint
         run: ruff check src tests tools
       - name: Tests

@@ -18,7 +18,7 @@ $$\mathcal{J}(\theta)=\mathbb{E}\Big[\frac{1}{G}\sum_{i=1}^{G}\frac{1}{|o_i|}\su
 | $1/\lvert o_i\rvert$ | length normalisation | `grpo.algorithm.losses.grpo_loss` |
 | update | LoRA parameters only, gradient-norm clipped, AdamW | `grpo.algorithm.step.grpo_step` |
 
-The refactor into these modules did not change the update: `tests/test_algorithm.py::test_update_is_bit_identical_to_the_original_implementation` checks loss, KL, clip fraction and the updated weights against values recorded from the pre-refactor code.
+The refactor into these modules did not change the update: `tests/test_algorithm.py::test_update_matches_the_original_implementation` checks loss, KL, clip fraction and the updated weights against values recorded from the pre-refactor code (exact on the recording machine; within float32 noise on other CPUs).
 
 ## Why the group mean is enough
 

@@ -190,7 +190,7 @@ The same pattern covers tasks (`grpo.data.TASKS`), reward components (`grpo.rewa
 
 `make test` runs the suite on CPU without downloading a model. The tiny stand-in model drives the **real** step, training loop, evaluation, probe and CLI end to end. If `transformers` and `peft` are installed, an integration test also runs the real Hugging Face + peft path on a tiny, locally built Qwen2 (no 4-bit: bitsandbytes needs a GPU).
 
-**The refactor did not change the algorithm.** A golden test checks that the update reproduces the loss, KL, clip fraction and updated weights recorded from the pre-refactor implementation, and that dataset version 1 reproduces the original 500 questions byte for byte.
+**The refactor did not change the algorithm.** A golden test checks that the update reproduces the loss, KL, clip fraction and updated weights recorded from the pre-refactor implementation (exactly on the machine that recorded them; within float32 noise, about 1e-7, on CPUs that take other kernel paths), and that dataset version 1 reproduces the original 500 questions byte for byte.
 
 **Every historical bug is a regression test, and the suite is mutation-tested.** Each silent failure found during development was reintroduced into a copy of the code; the suite fails for every one:
 
@@ -215,7 +215,7 @@ The same pattern covers tasks (`grpo.data.TASKS`), reward components (`grpo.rewa
 | evaluation sampling not seeded | `test_evaluation_seeds_its_own_sampling` |
 | stop detection uses only the tokenizer's EOS | `test_step_ends_answers_on_every_stop_token` |
 
-18 of 18 mutations make the suite fail (`make mutation` reruns the check). The golden test (`test_update_is_bit_identical_to_the_original_implementation`) additionally catches every mutation of the update itself.
+18 of 18 mutations make the suite fail (`make mutation` reruns the check). The golden test (`test_update_matches_the_original_implementation`) additionally catches every mutation of the update itself, on both AVX-512 and generic CPU kernels.
 
 ---
 

@@ -3,8 +3,9 @@
 ## 2.0.0 — modular architecture
 
 The GRPO update is unchanged: on identical inputs the refactored step reproduces
-the loss, KL, clip fraction and updated weights of 1.1.0 exactly
-(`test_update_is_bit_identical_to_the_original_implementation`).
+the loss, KL, clip fraction and updated weights of 1.1.0 (exactly on the same
+machine, within float32 noise across CPUs;
+`test_update_matches_the_original_implementation`).
 
 **Structure**
 - Split into `data` (tasks), `rewards` (components + composite), `algorithm`

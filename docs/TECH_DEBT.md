@@ -7,7 +7,8 @@ marked **fixed** were resolved in v2.0.0 and are listed so the history is clear.
 ## A. Before the next GPU experiment
 
 **A1. The GPU path has not been run since the refactor.** The update is
-bit-identical to the original on CPU (`test_update_is_bit_identical_to_the_original_implementation`),
+identical to the original on CPU, within float32 noise across CPU types
+(`test_update_matches_the_original_implementation`),
 and the real Hugging Face + peft path runs end to end on a tiny locally built
 Qwen2 (`tests/test_hf_integration.py`). Not exercised: 4-bit loading
 (bitsandbytes needs a GPU) and the real Qwen tokenizer and weights.
